@@ -1,0 +1,48 @@
+Sub Astock():
+    Dim WS_Count As Integer
+    Dim P As Integer
+    Dim last_row As Long
+    Dim Table As Long
+    Dim year_change As Long
+    Dim percent As Double
+    Dim Vol As Double
+    WS_Count = ActiveWorkbook.Worksheets.Count
+    Table = 2
+    year_change = 0
+    percent = 0
+    Vol = 0
+    
+    For P = 1 To WS_Count
+        ActiveWorkbook.Worksheets(P).Activate
+        last_row = Cells(Rows.Count, 1).End(xlUp).Row
+        Table = 2
+        year_change = 0
+        percent = 0
+        Vol = 0
+        Cells(1, 9) = "Ticker"
+        Cells(1, 10) = "Yearly Change"
+        Cells(1, 11) = "Percent Change"
+        Cells(1, 12) = "Total Stock Volume"
+        
+        For i = 2 To last_row
+            If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+                Cells(Table, 9).Value = Cells(i, 1).Value
+                Cells(Table, 10).Value = Cells(i, 6).Value - Cells(i, 3).Value
+                If Cells(Table, 10).Value > 0 Then
+                    Cells(Table, 10).Interior.ColorIndex = 4
+                End If
+                If Cells(Table, 10).Value < 0 Then
+                    Cells(Table, 10).Interior.ColorIndex = 3
+                End If
+                If Cells(i, 6).Value = 0 Then
+                    Cells(Table, 11).Value = 0
+                Else: Cells(Table, 11).Value = (Cells(i, 6).Value / Cells(i, 3).Value) * 100
+                End If
+                Cells(Table, 12).Value = Vol + Cells(i, 7).Value
+                Vol = 0
+                Table = Table + 1
+            Else: Vol = Vol + Cells(i, 7).Value
+            End If
+        Next i
+    Next P
+End Sub
